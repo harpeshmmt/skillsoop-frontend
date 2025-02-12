@@ -2,12 +2,14 @@ import {
   Autocomplete,
   Box,
   CircularProgress,
+  Container,
   FormControl,
   FormHelperText,
   Grid2,
   IconButton,
   InputAdornment,
   InputLabel,
+  Link,
   MenuItem,
   OutlinedInput,
   Select,
@@ -37,6 +39,7 @@ import { useNavigate } from "react-router";
 import { showSnackbar } from "../features/counter/snackbarSlice";
 import SnackbarComponent from "../MUI/Snackbar";
 import { severity } from "../constant/common";
+import "react-phone-input-2/lib/style.css";
 
 const SignupSchema = yup.object().shape({
   first_name: yup
@@ -247,472 +250,505 @@ const Registrationpage = () => {
 
   return (
     <>
-      <Typography variant="h2" gutterBottom sx={{ color: "gray" }}>
-        Registration Form
-      </Typography>
-      <Box
+      <Container
         sx={{
-          width: "70%",
-          marginLeft: "auto",
-          marginRight: "auto",
-          border: "1px solid lightgrey",
-          p: 5,
-          borderRadius: 5,
-          boxShadow: 3,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100%",
         }}
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid2
-            container
-            rowSpacing={4}
-            columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 5 }}
-          >
-            <Grid2 size={6}>
-              <Controller
-                name="first_name"
-                render={({ field }) => (
-                  <TextField
-                    id="first_name"
-                    error={Boolean(errors.first_name)}
-                    label="First name"
-                    variant="outlined"
-                    fullWidth
-                    helperText={errors.first_name && errors.first_name.message}
-                    {...field}
-                  />
-                )}
-                control={control}
-                defaultValue=""
-              />
-            </Grid2>
-            <Grid2 size={6}>
-              <Controller
-                name="last_name"
-                render={({ field }) => (
-                  <TextField
-                    error={Boolean(errors.last_name)}
-                    id="last_name"
-                    label="Last name"
-                    variant="outlined"
-                    fullWidth
-                    helperText={errors.last_name && errors.last_name.message}
-                    {...field}
-                  />
-                )}
-                control={control}
-                defaultValue=""
-              />
-            </Grid2>
-            <Grid2 size={6}>
-              <Controller
-                name="email"
-                render={({ field }) => (
-                  <TextField
-                    id="email"
-                    error={Boolean(errors.email)}
-                    label="Email"
-                    variant="outlined"
-                    fullWidth
-                    helperText={errors.email && errors.email.message}
-                    {...field}
-                  />
-                )}
-                control={control}
-                defaultValue=""
-              />
-            </Grid2>
-            <Grid2 size={6}>
-              <Controller
-                name="password"
-                control={control}
-                render={({ field }) => (
-                  <FormControl
-                    fullWidth
-                    variant="outlined"
-                    error={Boolean(errors.password)}
-                  >
-                    <InputLabel htmlFor="adornment-password">
-                      Password
-                    </InputLabel>
-                    <OutlinedInput
-                      id="adornment-password"
-                      type={showPassword ? "text" : "password"}
-                      label="Password"
-                      {...field}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label={
-                              showPassword
-                                ? "hide the password"
-                                : "display the password"
-                            }
-                            onClick={handleClickShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            onMouseUp={handleMouseUpPassword}
-                            edge="end"
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                    />
-                    {errors.password && (
-                      <FormHelperText>{errors.password.message}</FormHelperText>
-                    )}
-                  </FormControl>
-                )}
-              />
-              {(password || errors.password) && !isPasswordValid && (
-                <Box sx={{ mt: 2 }}>
-                  {passwordValidations.map((validation, index) => (
-                    <Typography
-                      key={index}
-                      color={validation.isValid ? "green" : "error"}
-                      variant="body2"
-                      sx={{ mb: 1, textAlign: "left" }}
-                    >
-                      {validation.message}
-                    </Typography>
-                  ))}
-                </Box>
-              )}
-            </Grid2>
-            <Grid2 size={6}>
-              <Box sx={{ width: "100%", height: "100%" }}>
+        <Typography variant="h2" gutterBottom sx={{ color: "gray" }}>
+          Registration Form
+        </Typography>
+        <Box
+          sx={{
+            width: "70%",
+            marginLeft: "auto",
+            marginRight: "auto",
+            border: "1px solid lightgrey",
+            p: 5,
+            borderRadius: 5,
+            boxShadow: 3,
+          }}
+        >
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid2
+              container
+              rowSpacing={4}
+              columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 5 }}
+            >
+              <Grid2 size={6}>
                 <Controller
-                  name="phone_number"
+                  name="first_name"
+                  render={({ field }) => (
+                    <TextField
+                      id="first_name"
+                      error={Boolean(errors.first_name)}
+                      label="First name"
+                      variant="outlined"
+                      fullWidth
+                      helperText={
+                        errors.first_name && errors.first_name.message
+                      }
+                      {...field}
+                    />
+                  )}
                   control={control}
                   defaultValue=""
-                  render={(renderProps) => (
-                    <FormControl fullWidth error={Boolean(errors.phone_number)}>
-                      <PhoneInput
-                        country={"in"}
-                        inputStyle={{
-                          color: "black",
-                          width: "100%",
-                          height: "56px",
-                        }}
-                        value={renderProps.field.value}
-                        onChange={handlePhoneChange}
+                />
+              </Grid2>
+              <Grid2 size={6}>
+                <Controller
+                  name="last_name"
+                  render={({ field }) => (
+                    <TextField
+                      error={Boolean(errors.last_name)}
+                      id="last_name"
+                      label="Last name"
+                      variant="outlined"
+                      fullWidth
+                      helperText={errors.last_name && errors.last_name.message}
+                      {...field}
+                    />
+                  )}
+                  control={control}
+                  defaultValue=""
+                />
+              </Grid2>
+              <Grid2 size={6}>
+                <Controller
+                  name="email"
+                  render={({ field }) => (
+                    <TextField
+                      id="email"
+                      error={Boolean(errors.email)}
+                      label="Email"
+                      variant="outlined"
+                      fullWidth
+                      helperText={errors.email && errors.email.message}
+                      {...field}
+                    />
+                  )}
+                  control={control}
+                  defaultValue=""
+                />
+              </Grid2>
+              <Grid2 size={6}>
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl
+                      fullWidth
+                      variant="outlined"
+                      error={Boolean(errors.password)}
+                    >
+                      <InputLabel htmlFor="adornment-password">
+                        Password
+                      </InputLabel>
+                      <OutlinedInput
+                        id="adornment-password"
+                        type={showPassword ? "text" : "password"}
+                        label="Password"
+                        {...field}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label={
+                                showPassword
+                                  ? "hide the password"
+                                  : "display the password"
+                              }
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              onMouseUp={handleMouseUpPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        }
                       />
+                      {errors.password && (
+                        <FormHelperText>
+                          {errors.password.message}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+                  )}
+                />
+                {(password || errors.password) && !isPasswordValid && (
+                  <Box sx={{ mt: 2 }}>
+                    {passwordValidations.map((validation, index) => (
+                      <Typography
+                        key={index}
+                        color={validation.isValid ? "green" : "error"}
+                        variant="body2"
+                        sx={{ mb: 1, textAlign: "left" }}
+                      >
+                        {validation.message}
+                      </Typography>
+                    ))}
+                  </Box>
+                )}
+              </Grid2>
+              <Grid2 size={6}>
+                <Box sx={{ width: "100%", height: "100%" }}>
+                  <Controller
+                    name="phone_number"
+                    control={control}
+                    defaultValue=""
+                    render={(renderProps) => (
+                      <FormControl
+                        fullWidth
+                        error={Boolean(errors.phone_number)}
+                      >
+                        <PhoneInput
+                          country={"in"}
+                          inputStyle={{
+                            color: "black",
+                            width: "100%",
+                            height: "56px",
+                          }}
+                          value={renderProps.field.value}
+                          onChange={handlePhoneChange}
+                        />
+                        <FormHelperText>
+                          {errors.phone_number && errors.phone_number.message}
+                        </FormHelperText>
+                      </FormControl>
+                    )}
+                  />
+                </Box>
+              </Grid2>
+              {/* gender */}
+              <Grid2 size={6}>
+                <Controller
+                  name="gender"
+                  // id="gender"
+                  control={control}
+                  render={(renderProps) => (
+                    <FormControl fullWidth error={Boolean(errors.gender)}>
+                      <InputLabel id="select-gender">Gender</InputLabel>
+                      <Select
+                        labelId="select-gender"
+                        id="gender"
+                        label="Gender"
+                        value={renderProps.field.value}
+                        onChange={renderProps.field.onChange}
+                        sx={{ textAlign: "left" }}
+                        fullWidth
+                      >
+                        <MenuItem value={"male"}>Male</MenuItem>
+                        <MenuItem value={"female"}>Female</MenuItem>
+                      </Select>
                       <FormHelperText>
-                        {errors.phone_number && errors.phone_number.message}
+                        {errors.gender && errors.gender.message}
                       </FormHelperText>
                     </FormControl>
                   )}
                 />
-              </Box>
-            </Grid2>
-            {/* gender */}
-            <Grid2 size={6}>
-              <Controller
-                name="gender"
-                // id="gender"
-                control={control}
-                render={(renderProps) => (
-                  <FormControl fullWidth error={Boolean(errors.gender)}>
-                    <InputLabel id="select-gender">Gender</InputLabel>
-                    <Select
-                      labelId="select-gender"
-                      id="gender"
-                      label="Gender"
-                      value={renderProps.field.value}
-                      onChange={renderProps.field.onChange}
-                      sx={{ textAlign: "left" }}
-                      fullWidth
-                    >
-                      <MenuItem value={"male"}>Male</MenuItem>
-                      <MenuItem value={"female"}>Female</MenuItem>
-                    </Select>
-                    <FormHelperText>
-                      {errors.gender && errors.gender.message}
-                    </FormHelperText>
-                  </FormControl>
-                )}
-              />
-            </Grid2>
-            {/* datepicker */}
-            <Grid2 size={6}>
-              <FormControl fullWidth error={Boolean(errors.date_of_birth)}>
-                <DemoContainer
-                  components={["DatePicker"]}
-                  // sx={{ paddingTop:  }}
-                >
-                  <Controller
-                    name="date_of_birth"
-                    control={control}
-                    render={({ field }) => (
-                      <DatePicker
-                        {...field}
-                        label="Date of Birth"
-                        disableFuture
-                        minDate={minDate}
-                        format="YYYY-MM-DD"
-                        onChange={(newValue) => {
-                          // debugger;
-                          setValue(
-                            "date_of_birth",
-                            dayjs(newValue).format("YYYY-MM-DD")
-                          );
-                          trigger("date_of_birth");
-                        }}
-                        value={
-                          field.value ? dayjs(field.value, "YYYY-MM-DD") : null
-                        }
-                        sx={{ width: "100%" }}
-                      />
-                    )}
-                  />
-                </DemoContainer>
-                <FormHelperText>
-                  {errors.date_of_birth && errors.date_of_birth.message}
-                </FormHelperText>
-              </FormControl>
-            </Grid2>
+              </Grid2>
+              {/* datepicker */}
+              <Grid2 size={6}>
+                <FormControl fullWidth error={Boolean(errors.date_of_birth)}>
+                  <DemoContainer
+                    components={["DatePicker"]}
+                    // sx={{ paddingTop:  }}
+                  >
+                    <Controller
+                      name="date_of_birth"
+                      control={control}
+                      render={({ field }) => (
+                        <DatePicker
+                          {...field}
+                          label="Date of Birth"
+                          disableFuture
+                          minDate={minDate}
+                          format="YYYY-MM-DD"
+                          onChange={(newValue) => {
+                            // debugger;
+                            setValue(
+                              "date_of_birth",
+                              dayjs(newValue).format("YYYY-MM-DD")
+                            );
+                            trigger("date_of_birth");
+                          }}
+                          value={
+                            field.value
+                              ? dayjs(field.value, "YYYY-MM-DD")
+                              : null
+                          }
+                          sx={{ width: "100%" }}
+                        />
+                      )}
+                    />
+                  </DemoContainer>
+                  <FormHelperText>
+                    {errors.date_of_birth && errors.date_of_birth.message}
+                  </FormHelperText>
+                </FormControl>
+              </Grid2>
 
-            <Grid2 size={6} sx={{ paddingTop: 1 }}>
-              <Controller
-                name="country_of_birth"
-                control={control}
-                render={({ field }) => (
-                  <Autocomplete
-                    {...field}
-                    options={countryapidata}
-                    getOptionLabel={(option) => option.name || "Unknown"}
-                    value={
-                      selectedCountry
-                        ? countryapidata.find(
-                            (country: any) => country.id === selectedCountry
-                          )
-                        : null
-                    }
-                    renderOption={(props, option) => {
-                      const { key, ...optionProps } = props;
-                      return (
-                        <Box
-                          key={key}
-                          component="li"
-                          sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                          {...optionProps}
-                        >
-                          <img
-                            loading="lazy"
-                            width="20"
-                            srcSet={option?.flag}
-                            src={option?.flag}
-                            alt=""
-                          />
-                          {option.name} ({option.abbreviation})
-                        </Box>
-                      );
-                    }}
-                    onChange={(event, value) => {
-                      // debugger;
-                      console.log(value);
-                      field.onChange(value ? value.id : "");
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Country of Birth"
-                        error={Boolean(errors.country_of_birth)}
-                        helperText={errors.country_of_birth?.message}
-                      />
-                    )}
-                  />
-                )}
-              />
-            </Grid2>
-            {/* Country Residency */}
-            <Grid2 size={6}>
-              <Controller
-                name="country_residing"
-                control={control}
-                render={({ field }) => (
-                  <Autocomplete
-                    {...field}
-                    id="country_residing"
-                    options={
-                      Array.isArray(countryapidata) ? countryapidata : []
-                    }
-                    getOptionLabel={(option) => option?.name || ""}
-                    value={
-                      countryapidata.find(
-                        (country: any) => country.id === field.value
-                      ) || null
-                    }
-                    onChange={(e, value: any) => {
-                      handleAutocomplete(
-                        "countryabbreviation",
-                        value.abbreviation
-                      );
-                      field.onChange(value ? value.id : "");
-                      statesdata(value.id);
-                      cityApiData();
-                    }}
-                    renderOption={(props, option) => {
-                      const { key, ...optionProps } = props;
-                      return (
-                        <Box
-                          key={key}
-                          component="li"
-                          sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                          {...optionProps}
-                        >
-                          <img
-                            loading="lazy"
-                            width="20"
-                            srcSet={option?.flag}
-                            src={option?.flag}
-                            alt=""
-                          />
-                          {option?.name} ({option?.abbreviation || "N/A"})
-                        </Box>
-                      );
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Country Residency"
-                        error={Boolean(errors.country_residing)}
-                        helperText={errors.country_residing?.message}
-                      />
-                    )}
-                  />
-                )}
-              />
-            </Grid2>
-            {/* state */}
-            <Grid2 size={6}>
-              <Controller
-                name="state"
-                control={control}
-                render={({ field }) => (
-                  <FormControl fullWidth error={Boolean(errors.state)}>
-                    <InputLabel id="state-label">State</InputLabel>
-                    <Select
+              <Grid2 size={6} sx={{ paddingTop: 1 }}>
+                <Controller
+                  name="country_of_birth"
+                  control={control}
+                  render={({ field }) => (
+                    <Autocomplete
                       {...field}
-                      sx={{ textAlign: "left" }}
-                      labelId="state-label"
-                      label="State"
-                      onChange={(e) => {
-                        field.onChange(e.target.value);
+                      options={countryapidata}
+                      getOptionLabel={(option) => option.name || "Unknown"}
+                      value={
+                        selectedCountry
+                          ? countryapidata.find(
+                              (country: any) => country.id === selectedCountry
+                            )
+                          : null
+                      }
+                      renderOption={(props, option) => {
+                        const { key, ...optionProps } = props;
+                        return (
+                          <Box
+                            key={key}
+                            component="li"
+                            sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                            {...optionProps}
+                          >
+                            <img
+                              loading="lazy"
+                              width="20"
+                              srcSet={option?.flag}
+                              src={option?.flag}
+                              alt=""
+                            />
+                            {option.name} ({option.abbreviation})
+                          </Box>
+                        );
                       }}
-                      value={field.value || ""}
-                    >
-                      {state.map((option: any) => (
-                        <MenuItem key={option?.id} value={option?.id}>
-                          {option?.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.state && (
-                      <FormHelperText>{errors.state.message}</FormHelperText>
-                    )}
-                  </FormControl>
-                )}
-              />
-            </Grid2>
-            {/* postcode */}
-            <Grid2 size={6}>
-              <Controller
-                name="postcode"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    id="postcode"
-                    label="Postcode"
-                    variant="outlined"
-                    fullWidth
-                    error={Boolean(errors.postcode)}
-                    helperText={errors.postcode && errors.postcode.message}
-                    // onChange={(e) => {
-                    //   handleInputElement(e);
-                    //   cityApiData();
-                    //   trigger("postcode");
-                    // }}
-                    value={field.value}
-                    onChange={handlePostcodeChange}
-                  />
-                )}
-              />
-            </Grid2>
-            <Grid2 size={6}>
-              <Controller
-                name="city"
-                control={control}
-                render={({ field }) => (
-                  <Box sx={{ position: "relative" }}>
+                      onChange={(event, value) => {
+                        // debugger;
+                        console.log(value);
+                        field.onChange(value ? value.id : "");
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Country of Birth"
+                          error={Boolean(errors.country_of_birth)}
+                          helperText={errors.country_of_birth?.message}
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </Grid2>
+              {/* Country Residency */}
+              <Grid2 size={6}>
+                <Controller
+                  name="country_residing"
+                  control={control}
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      id="country_residing"
+                      options={
+                        Array.isArray(countryapidata) ? countryapidata : []
+                      }
+                      getOptionLabel={(option) => option?.name || ""}
+                      value={
+                        countryapidata.find(
+                          (country: any) => country.id === field.value
+                        ) || null
+                      }
+                      onChange={(e, value: any) => {
+                        handleAutocomplete(
+                          "countryabbreviation",
+                          value.abbreviation
+                        );
+                        field.onChange(value ? value.id : "");
+                        statesdata(value.id);
+                        cityApiData();
+                      }}
+                      renderOption={(props, option) => {
+                        const { key, ...optionProps } = props;
+                        return (
+                          <Box
+                            key={key}
+                            component="li"
+                            sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                            {...optionProps}
+                          >
+                            <img
+                              loading="lazy"
+                              width="20"
+                              srcSet={option?.flag}
+                              src={option?.flag}
+                              alt=""
+                            />
+                            {option?.name} ({option?.abbreviation || "N/A"})
+                          </Box>
+                        );
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Country Residency"
+                          error={Boolean(errors.country_residing)}
+                          helperText={errors.country_residing?.message}
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </Grid2>
+              {/* state */}
+              <Grid2 size={6}>
+                <Controller
+                  name="state"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl fullWidth error={Boolean(errors.state)}>
+                      <InputLabel id="state-label">State</InputLabel>
+                      <Select
+                        {...field}
+                        sx={{ textAlign: "left" }}
+                        labelId="state-label"
+                        label="State"
+                        onChange={(e) => {
+                          field.onChange(e.target.value);
+                        }}
+                        value={field.value || ""}
+                      >
+                        {state.map((option: any) => (
+                          <MenuItem key={option?.id} value={option?.id}>
+                            {option?.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {errors.state && (
+                        <FormHelperText>{errors.state.message}</FormHelperText>
+                      )}
+                    </FormControl>
+                  )}
+                />
+              </Grid2>
+              {/* postcode */}
+              <Grid2 size={6}>
+                <Controller
+                  name="postcode"
+                  control={control}
+                  render={({ field }) => (
                     <TextField
                       {...field}
-                      label="City"
+                      id="postcode"
+                      label="Postcode"
+                      variant="outlined"
                       fullWidth
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                      error={Boolean(errors.city)}
-                      helperText={errors.city && errors.city.message}
+                      error={Boolean(errors.postcode)}
+                      helperText={errors.postcode && errors.postcode.message}
+                      // onChange={(e) => {
+                      //   handleInputElement(e);
+                      //   cityApiData();
+                      //   trigger("postcode");
+                      // }}
+                      value={field.value}
+                      onChange={handlePostcodeChange}
                     />
-                    {cityloading && (
-                      <CircularProgress
-                        size={24}
-                        sx={{
-                          color: "gray",
-                          position: "absolute",
-                          right: 8,
-                          top: "30%",
-                          transform: "translateY(-50%)",
+                  )}
+                />
+              </Grid2>
+              <Grid2 size={6}>
+                <Controller
+                  name="city"
+                  control={control}
+                  render={({ field }) => (
+                    <Box sx={{ position: "relative" }}>
+                      <TextField
+                        {...field}
+                        label="City"
+                        fullWidth
+                        InputProps={{
+                          readOnly: true,
                         }}
+                        error={Boolean(errors.city)}
+                        helperText={errors.city && errors.city.message}
                       />
-                    )}
-                  </Box>
-                )}
-              />
+                      {cityloading && (
+                        <CircularProgress
+                          size={24}
+                          sx={{
+                            color: "gray",
+                            position: "absolute",
+                            right: 8,
+                            top: "30%",
+                            transform: "translateY(-50%)",
+                          }}
+                        />
+                      )}
+                    </Box>
+                  )}
+                />
+              </Grid2>
+              <Button
+                variant="contained"
+                type="submit"
+                // onClick={() => navigate("/skillsoop-frontend/emailverification")}
+                sx={{
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  height: 50,
+                  width: 150,
+                  fontWeight: "Bold",
+                  fontSize: 18,
+                  textTransform: "none",
+                }}
+              >
+                Sing Up
+              </Button>
             </Grid2>
-            <Button
-              variant="contained"
-              type="submit"
-              // onClick={() => navigate("/skillsoop-frontend/emailverification")}
-              sx={{
-                marginLeft: "auto",
-                marginRight: "auto",
-                height: 50,
-                width: 150,
-                fontWeight: "Bold",
-                fontSize: 18,
-                textTransform: "none",
-              }}
-            >
-              Sing Up
-            </Button>
-          </Grid2>
+            <Typography variant="h5" gutterBottom sx={{ color: "gray" }}>
+              you have an account,
+              <Link
+                component={Button}
+                onClick={() => navigate("/skillsoop-frontend/login")}
+              >
+                Login
+              </Link>
+            </Typography>
 
-          {loading && (
-            <Box
-              sx={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                backgroundColor: "rgba(0, 0, 0, 0.2)",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                zIndex: 9999,
-              }}
-            >
-              <CircularProgress
-                size={50}
-                sx={{ zIndex: 10000, color: "gray" }}
-              />
-            </Box>
-          )}
-        </form>
-        <SnackbarComponent />
-      </Box>
+            {loading && (
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "rgba(0, 0, 0, 0.2)",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  zIndex: 9999,
+                }}
+              >
+                <CircularProgress
+                  size={50}
+                  sx={{ zIndex: 10000, color: "gray" }}
+                />
+              </Box>
+            )}
+          </form>
+          <SnackbarComponent />
+        </Box>
+      </Container>
     </>
   );
 };

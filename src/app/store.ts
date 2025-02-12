@@ -2,12 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import counterReducer from "../features/counter/counterSlice";
 import coutriesReducer from "../features/counter/commonSlice";
 import snackbarReducer from "../features/counter/snackbarSlice";
-
+import authReducer from "../features/counter/authSlice";
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
     common: coutriesReducer,
     snackbar: snackbarReducer,
+    auth: authReducer,
   },
 });
 

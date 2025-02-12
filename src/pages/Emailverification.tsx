@@ -13,8 +13,8 @@ const Emailverification = () => {
   const [remainingTime, setRemainingTime] = useState(0);
 
   const email = {
-    // email: location.state?.email,
-    email: "rockyrayan3@gmail.com",
+    email: location.state?.email,
+    // email: "rockyrayan3@gmail.com",
   };
 
   const email_Verification = () => {
@@ -100,7 +100,6 @@ const Emailverification = () => {
               }}
             >
               {email.email}
-              {/* {email.email} */}
             </Typography>
             <Button
               variant="contained"

@@ -22,25 +22,25 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import {
-  login,
-  registerForm,
-  emailVerification,
-} from "../components/services/common";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router";
+import { resetPassword } from "../components/services/common";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router";
 import { showSnackbar } from "../features/counter/snackbarSlice";
 import SnackbarComponent from "../MUI/Snackbar";
 import { severity, severityerror } from "../constant/common";
+
+import usePasswordValidations from "../components/customhooks/customhooks";
 import { handleFieldErrors } from "../utils/helper";
-import { setAuthData } from "../features/counter/authSlice";
 
 const SignupSchema = yup.object().shape({
-  email: yup.string().email(),
-  password: yup.string(),
+  new_password: yup.string().required("Password is required"),
+  confirm_password: yup
+    .string()
+    .required("Confirm password is required")
+    .oneOf([yup.ref("new_password")], "Passwords must match"),
 });
 
-const Loginpage = () => {
+const Resetpassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isEmailNotConfirmed, setIsEmailNotConfirmed] = useState(false);
   const [isAccountInactive, setIsAccountInactive] = useState(false);
@@ -59,9 +59,7 @@ const Loginpage = () => {
     resolver: yupResolver(SignupSchema),
   });
 
-  const email = {
-    email: watch("email"),
-  };
+  const { token, id } = useParams();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -77,48 +75,22 @@ const Loginpage = () => {
     event.preventDefault();
   };
 
-  // const onSubmit = async (data: any) => {
-  //   const payload = { ...data };
+  const password = watch("new_password");
+  const confirmPassword = watch("confirm_password");
 
-  //   try {
-  //     const { data }: any = await login(payload);
-  //     console.log("User registered successfully", data.data);
-  //   } catch (error: any) {
-  //     const { errors } = error.response.data;
-  //     const errorMessage = errors?.error?.[0];
+  const passwordValidations = usePasswordValidations(password);
 
-  //     if (errorMessage) {
-  //       handleErrorResponse(
-  //         errorMessage,
-  //         errors,
-  //         setIsEmailNotConfirmed,
-  //         setIsAccountInactive,
-  //         dispatch
-  //       );
-  //     } else if (errors) {
-  //       handleFieldErrors(errors, setError);
-  //     }
-  //   }
-  // };
+  const isPasswordValid = passwordValidations.every(
+    (validation) => validation.isValid
+  );
 
   const onSubmit = async (data: any) => {
     const payload = { ...data };
 
+    delete payload.confirm_password;
+
     try {
-      const response = await login(payload);
-      const { user, tokens } = response.data.data;
-      dispatch(
-        setAuthData({
-          user: user,
-          tokens: tokens,
-        })
-      );
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("accessToken", tokens.access);
-      localStorage.setItem("refreshToken", tokens.refresh);
-      if (tokens.access) {
-        navigate("/skillsoop-frontend/candidate/dashboard");
-      }
+      const response = await resetPassword(token, id, payload);
       const successMessage = response.data.message;
       dispatch(
         showSnackbar({
@@ -126,17 +98,27 @@ const Loginpage = () => {
           severity: severity.severityMessage,
         })
       );
+      navigate("/skillsoop-frontend/login");
     } catch (error: any) {
-      const { errors } = error.response.data;
-      const errorMessage = errors?.error?.[0];
+      const { data } = error.response;
+      const errorMessage = data.error;
       if (errorMessage) {
         handleErrorResponse(
           errorMessage,
-          errors,
           setIsEmailNotConfirmed,
           setIsAccountInactive,
           dispatch
         );
+      } else if (error) {
+        const { errors } = error.response.data;
+        for (const field in errors) {
+          if (errors.hasOwnProperty(field)) {
+            const errorMessages = errors[field];
+            setError(field as any, {
+              message: errorMessages[0],
+            });
+          }
+        }
       } else if (errors) {
         handleFieldErrors(errors, setError);
       }
@@ -145,7 +127,6 @@ const Loginpage = () => {
 
   const handleErrorResponse = (
     errorMessage,
-    errors,
     setIsEmailNotConfirmed,
     setIsAccountInactive,
     dispatch
@@ -156,53 +137,6 @@ const Loginpage = () => {
         severity: severityerror.severityMessage,
       })
     );
-
-    if (errorMessage === "Email is not confirmed yet!.") {
-      setIsEmailNotConfirmed(true);
-      setIsAccountInactive(false);
-    } else if (errorMessage === "Your account is not active.") {
-      setIsAccountInactive(true);
-      setIsEmailNotConfirmed(false);
-    }
-  };
-
-  const email_Verification = () => {
-    emailVerification(email)
-      .then((response) => {
-        console.log(response);
-        setIsButtonDisabled(true);
-        setRemainingTime(10);
-        dispatch(
-          showSnackbar({
-            message: response.data?.message,
-            severity: severity.severityMessage,
-          })
-        );
-      })
-      .catch((error) => {
-        dispatch(
-          showSnackbar({
-            message: error,
-            severity: "error",
-          })
-        );
-      });
-  };
-
-  useEffect(() => {
-    let timer: any;
-    if (remainingTime > 0) {
-      timer = setInterval(() => {
-        setRemainingTime((prevTime) => prevTime - 1);
-      }, 1000);
-    } else {
-      setIsButtonDisabled(false);
-    }
-    return () => clearInterval(timer);
-  }, [remainingTime]);
-
-  const handleActivateAccountClick = () => {
-    navigate("/skillsoop-frontend/activate-account");
   };
 
   return (
@@ -218,7 +152,7 @@ const Loginpage = () => {
         }}
       >
         <Typography variant="h2" gutterBottom sx={{ color: "gray" }}>
-          Login
+          Reset password
         </Typography>
         <Box
           sx={{
@@ -240,31 +174,13 @@ const Loginpage = () => {
             >
               <Grid2>
                 <Controller
-                  name="email"
-                  render={({ field }) => (
-                    <TextField
-                      id="email"
-                      error={Boolean(errors.email)}
-                      label="Email"
-                      variant="outlined"
-                      fullWidth
-                      helperText={errors.email && errors.email.message}
-                      {...field}
-                    />
-                  )}
-                  control={control}
-                  defaultValue=""
-                />
-              </Grid2>
-              <Grid2>
-                <Controller
-                  name="password"
+                  name="new_password"
                   control={control}
                   render={({ field }) => (
                     <FormControl
                       fullWidth
                       variant="outlined"
-                      error={Boolean(errors.password)}
+                      error={Boolean(errors.new_password)}
                     >
                       <InputLabel htmlFor="adornment-password">
                         Password
@@ -296,15 +212,79 @@ const Loginpage = () => {
                           </InputAdornment>
                         }
                       />
-                      {errors.password && (
+                      {errors.new_password && (
                         <FormHelperText>
-                          {errors.password.message}
+                          {errors.new_password.message}
                         </FormHelperText>
                       )}
                     </FormControl>
                   )}
                 />
               </Grid2>
+              {(password || errors.new_password) && !isPasswordValid && (
+                <Box sx={{ mt: 2 }}>
+                  {passwordValidations.map((validation, index) => (
+                    <Typography
+                      key={index}
+                      color={validation.isValid ? "green" : "error"}
+                      variant="body2"
+                      sx={{ mb: 1, textAlign: "left" }}
+                    >
+                      {validation.message}
+                    </Typography>
+                  ))}
+                </Box>
+              )}
+              <Grid2>
+                <Controller
+                  name="confirm_password"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl
+                      fullWidth
+                      variant="outlined"
+                      error={Boolean(errors.confirm_password)}
+                    >
+                      <InputLabel htmlFor="adornment-password">
+                        Confirm password
+                      </InputLabel>
+                      <OutlinedInput
+                        id="adornment-password"
+                        type={showPassword ? "text" : "password"}
+                        label="Confirm password"
+                        {...field}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label={
+                                showPassword
+                                  ? "hide the password"
+                                  : "display the password"
+                              }
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              onMouseUp={handleMouseUpPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                      {errors.confirm_password && (
+                        <FormHelperText>
+                          {errors.confirm_password.message}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+                  )}
+                />
+              </Grid2>
+
               <Button
                 variant="contained"
                 type="submit"
@@ -312,61 +292,15 @@ const Loginpage = () => {
                   marginLeft: "auto",
                   marginRight: "auto",
                   height: 50,
-                  width: 150,
+                  width: 200,
                   fontWeight: "Bold",
                   fontSize: 18,
                   textTransform: "none",
                 }}
               >
-                Login
+                Reset Password
               </Button>
-
-              {isEmailNotConfirmed && (
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  disabled={isButtonDisabled}
-                  sx={{
-                    marginTop: 2,
-                  }}
-                  onClick={() => email_Verification()}
-                >
-                  {isButtonDisabled
-                    ? `Resend in ${remainingTime}s`
-                    : "Verify Email"}
-                </Button>
-              )}
-
-              {isAccountInactive && (
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  sx={{
-                    marginTop: 2,
-                  }}
-                  onClick={() => handleActivateAccountClick()}
-                >
-                  Activate Account
-                </Button>
-              )}
             </Grid2>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ color: "gray", marginTop: 3 }}
-            >
-              Don't have an account,
-              <Button onClick={() => navigate("/skillsoop-frontend/")}>
-                sign up
-              </Button>
-            </Typography>
-            <Button
-              sx={{}}
-              variant="text"
-              onClick={() => navigate("/skillsoop-frontend/forgot-password")}
-            >
-              Forgot Password
-            </Button>
           </form>
           <SnackbarComponent />
         </Box>
@@ -375,4 +309,4 @@ const Loginpage = () => {
   );
 };
 
-export default Loginpage;
+export default Resetpassword;
